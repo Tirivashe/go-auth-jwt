@@ -1,6 +1,9 @@
 package config
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/Tirivashe/go-fiber-jwt/routes"
+	"github.com/gofiber/fiber/v2"
+)
 
 type APIServer struct {
 	mux  *fiber.App
@@ -13,6 +16,7 @@ func (a *APIServer) Start() error {
 
 func NewAPIServer(addr string) *APIServer {
 	app := fiber.New()
+	routes.RegisterRoutes(app)
 	return &APIServer{
 		mux:  app,
 		addr: addr,
