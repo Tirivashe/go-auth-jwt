@@ -14,7 +14,17 @@ import (
 )
 
 func Login(c *fiber.Ctx) error {
-	return c.SendStatus(200)
+	var userDto types.UserDto
+	if err := c.BodyParser(&userDto); err != nil {
+		return err
+	}
+
+	queries := db.GetQueries()
+	_, err := queries.GetUserByEmail(context.Background(), userDto.Email)
+	if err == nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "already exists"})
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{"message": "login"})
 }
 
 func SignUp(c *fiber.Ctx) error {
