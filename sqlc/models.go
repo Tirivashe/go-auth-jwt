@@ -12,7 +12,7 @@ type User struct {
 	ID        int32
 	Name      string
 	Email     string
-	Password  sql.NullString
+	Password  string
 	Createdat sql.NullTime
 	Updatedat sql.NullTime
 }

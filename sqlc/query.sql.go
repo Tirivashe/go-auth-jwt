@@ -7,20 +7,37 @@ package sqlc
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createUser = `-- name: CreateUser :exec
-INSERT INTO users(name, email, password) VALUES ($1, $2, $3)
+INSERT INTO users (name, email, password) VALUES ($1, $2, $3)
 `
 
 type CreateUserParams struct {
 	Name     string
 	Email    string
-	Password sql.NullString
+	Password string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
 	_, err := q.db.ExecContext(ctx, createUser, arg.Name, arg.Email, arg.Password)
 	return err
+}
+
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT id, name, email, password, createdat, updatedat FROM users WHERE email = $1 LIMIT 1
+`
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.Password,
+		&i.Createdat,
+		&i.Updatedat,
+	)
+	return i, err
 }
