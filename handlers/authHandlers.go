@@ -14,7 +14,7 @@ import (
 )
 
 func Login(c *fiber.Ctx) error {
-	var userDto types.UserDto
+	var userDto types.UserLoginDto
 	if err := c.BodyParser(&userDto); err != nil {
 		return err
 	}
@@ -22,7 +22,7 @@ func Login(c *fiber.Ctx) error {
 	queries := db.GetQueries()
 	user, err := queries.GetUserByEmail(context.Background(), userDto.Email)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": err})
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Invalid Credentials"})
 	}
 	if user.ID == 0 {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Invalid credentials"})
@@ -40,7 +40,7 @@ func Login(c *fiber.Ctx) error {
 	cookie.Value = token
 	cookie.Expires = time.Now().Add(time.Hour * 24)
 	c.Cookie(cookie)
-	return c.Status(http.StatusCreated).JSON(fiber.Map{"message": "login success"})
+	return c.Status(http.StatusOK).JSON(fiber.Map{"message": "login success"})
 
 }
 
