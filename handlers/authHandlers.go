@@ -20,11 +20,28 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	queries := db.GetQueries()
-	_, err := queries.GetUserByEmail(context.Background(), userDto.Email)
-	if err == nil {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "already exists"})
+	user, err := queries.GetUserByEmail(context.Background(), userDto.Email)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"message": err})
 	}
-	return c.Status(http.StatusOK).JSON(fiber.Map{"message": "login"})
+	if user.ID == 0 {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Invalid credentials"})
+	}
+	if err = utils.CheckPassword(userDto.Password, user.Password); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"message": "Invalid credentials"})
+	}
+	token, err := auth.CreateToken(userDto.Email)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"token_error": err})
+	}
+
+	cookie := new(fiber.Cookie)
+	cookie.Name = "access_token"
+	cookie.Value = token
+	cookie.Expires = time.Now().Add(time.Hour * 24)
+	c.Cookie(cookie)
+	return c.Status(http.StatusCreated).JSON(fiber.Map{"message": "login success"})
+
 }
 
 func SignUp(c *fiber.Ctx) error {
