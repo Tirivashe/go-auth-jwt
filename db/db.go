@@ -11,7 +11,7 @@ import (
 var DB *sql.DB
 
 func ConnectToDB() {
-	connString := "postgres://postgres:shamzio3000@localhost:5432/tutorial?sslmode=disable"
+	connString := "postgresql://tutorial_k0uh_user:rP8wrRcuITtkhlMfCAJQx7sgKqlTBUxk@dpg-cq7qq3bv2p9s73c9b1h0-a.ohio-postgres.render.com/tutorial_k0uh"
 	db, err := sql.Open("postgres", connString)
 	if err != nil {
 		log.Fatal(err)
