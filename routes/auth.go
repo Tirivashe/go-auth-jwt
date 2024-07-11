@@ -13,4 +13,5 @@ func RegisterRoutes(app *fiber.App) {
 func authRoutes(v1 fiber.Router) {
 	v1.Post("/auth/login", handlers.Login)
 	v1.Post("/auth/signup", handlers.SignUp)
+	v1.Get("/health", handlers.HealthCheck)
 }

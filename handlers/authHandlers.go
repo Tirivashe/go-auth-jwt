@@ -81,3 +81,9 @@ func SignUp(c *fiber.Ctx) error {
 	c.Cookie(cookie)
 	return c.Status(http.StatusCreated).JSON(fiber.Map{"message": "created"})
 }
+
+func HealthCheck(c *fiber.Ctx) error {
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
+}
