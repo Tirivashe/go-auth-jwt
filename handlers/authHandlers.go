@@ -72,7 +72,7 @@ func SignUp(c *fiber.Ctx) error {
 
 	token, err := auth.CreateToken(userDto.Email)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"token_error": err})
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"t_error": err})
 	}
 	cookie := new(fiber.Cookie)
 	cookie.Name = "access_token"
